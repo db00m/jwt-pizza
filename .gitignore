@@ -4,4 +4,5 @@ cookies.txt
 config.js
 coverage
 dist
+.idea/
 **/.vite
