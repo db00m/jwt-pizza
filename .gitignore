@@ -6,3 +6,12 @@ coverage
 dist
 .idea/
 **/.vite
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+.nyc_output
