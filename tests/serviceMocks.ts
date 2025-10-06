@@ -1,0 +1,27 @@
+import { Page } from "@playwright/test";
+import { Role, User } from "../src/service/pizzaService";
+import { expect } from "playwright-test-coverage";
+
+const FAKE_TOKEN = "asdfasdf"
+
+export const initialize = async (page: Page) => {
+  let loggedInUser: User;
+  const validUsers: Record<string, User> = { 'd@jwt.com': { id: '3', name: 'Kai Chen', email: 'd@jwt.com', password: 'a', roles: [{ role: Role.Diner }] } };
+
+  // Authorize login for the given user
+  await page.route('*/**/api/auth', async (route) => {
+    const loginReq = route.request().postDataJSON();
+    const user = validUsers[loginReq.email];
+    if (!user || user.password !== loginReq.password) {
+      await route.fulfill({ status: 401, json: { error: 'Unauthorized' } });
+      return;
+    }
+    loggedInUser = validUsers[loginReq.email];
+    const loginRes = {
+      user: loggedInUser,
+      token: FAKE_TOKEN,
+    };
+    expect(route.request().method()).toBe('PUT');
+    await route.fulfill({ json: loginRes });
+  });
+}
