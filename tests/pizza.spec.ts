@@ -1,5 +1,5 @@
 import { test, expect } from 'playwright-test-coverage';
-import { initialize, initializeWithUser } from "./serviceMocks";
+import { initialize, initializeWithAdmin, initializeWithUser } from "./serviceMocks";
 
 test('HomePageLoads', async ({ page }) => {
   await page.goto('/');
@@ -63,10 +63,17 @@ test('CanMakeOrder', async ({ page }) => {
   await expect(page.getByRole('main')).toContainText('eyJpYXQ');
 })
 
-test('DinerDashboard', async ({ page }) => {
+test('DinerDashboardLoads', async ({ page }) => {
   await initializeWithUser(page);
   await page.getByRole('link', { name: 'K' }).click();
   await expect(page.getByRole('heading')).toContainText('Your pizza kitchen');
+})
+
+test('AdminDashboardLoads', async ({ page }) => {
+  await initializeWithAdmin(page);
+  await page.getByRole('link', { name: 'Admin' }).click();
+  await expect(page.locator('h2')).toContainText('Mama Ricci\'s kitchen');
+  await expect(page.locator('h3')).toContainText('Franchises');
 })
 
 test('Logout', async ({ page }) => {

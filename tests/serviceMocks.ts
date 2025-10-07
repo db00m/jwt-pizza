@@ -6,7 +6,10 @@ const FAKE_TOKEN = "asdfasdf"
 
 export const initialize = async (page: Page) => {
   let loggedInUser: User;
-  const validUsers: Record<string, User> = { 'd@jwt.com': { id: '3', name: 'Kai Chen', email: 'd@jwt.com', password: 'a', roles: [{ role: Role.Diner }] } };
+  const validUsers: Record<string, User> = {
+    'd@jwt.com': { id: '3', name: 'Kai Chen', email: 'd@jwt.com', password: 'a', roles: [{ role: Role.Diner }] },
+    'a@jwt.com': { id: '4', name: 'Admin', email: 'a@jwt.com', password: 'a', roles: [{ role: Role.Admin }] },
+  };
 
   // Authorize login for the given user
   await page.route('*/**/api/auth', async (route) => {
@@ -114,6 +117,16 @@ export const initializeWithUser = async (page: Page) => {
   await initialize(page);
   await page.getByRole('link', { name: 'Login' }).click();
   await page.getByRole('textbox', { name: 'Email address' }).fill('d@jwt.com');
+  await page.getByRole('textbox', { name: 'Password' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill('a');
+  await page.getByRole('button', { name: 'Login' }).click();
+}
+
+export const initializeWithAdmin = async (page: Page) => {
+  await page.goto('/');
+  await initialize(page);
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Email address' }).fill('a@jwt.com');
   await page.getByRole('textbox', { name: 'Password' }).click();
   await page.getByRole('textbox', { name: 'Password' }).fill('a');
   await page.getByRole('button', { name: 'Login' }).click();
