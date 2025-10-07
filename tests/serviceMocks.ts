@@ -142,6 +142,10 @@ export const initializeWithAdmin = async (page: Page) => {
         ]
       }})
   });
+
+  await page.route('*/**/api/franchise/*', async (route) => {
+    await route.fulfill({ json: { message: "franchise deleted" }});
+  });
 }
 
 export const initializeWithFranchisee = async (page: Page) => {
