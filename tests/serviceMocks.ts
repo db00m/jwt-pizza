@@ -7,8 +7,9 @@ const FAKE_TOKEN = "asdfasdf"
 export const initialize = async (page: Page) => {
   let loggedInUser: User;
   const validUsers: Record<string, User> = {
-    'd@jwt.com': { id: '3', name: 'Kai Chen', email: 'd@jwt.com', password: 'a', roles: [{ role: Role.Diner }] },
+    'd@jwt.com': { id: '3', name: 'Some Diner', email: 'd@jwt.com', password: 'a', roles: [{ role: Role.Diner }] },
     'a@jwt.com': { id: '4', name: 'Admin', email: 'a@jwt.com', password: 'a', roles: [{ role: Role.Admin }] },
+    'f@jwt.com': { id: '5', name: 'Franchisee', email: 'f@jwt.com', password: 'a', roles: [{ role: Role.Franchisee }] },
   };
 
   // Authorize login for the given user
@@ -130,4 +131,48 @@ export const initializeWithAdmin = async (page: Page) => {
   await page.getByRole('textbox', { name: 'Password' }).click();
   await page.getByRole('textbox', { name: 'Password' }).fill('a');
   await page.getByRole('button', { name: 'Login' }).click();
+
+  await page.route('*/**/api/franchise', async (route) => {
+    await route.fulfill({ json: {
+        "stores": [],
+        "id": 222,
+        "name": "Bilbos Pizza",
+        "admins": [
+          { id: '4', name: 'Admin', email: 'a@jwt.com', password: 'a', roles: [{ role: Role.Admin }] }
+        ]
+      }})
+  });
+}
+
+export const initializeWithFranchisee = async (page: Page) => {
+  await page.goto('/');
+  await initialize(page);
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Email address' }).fill('f@jwt.com');
+  await page.getByRole('textbox', { name: 'Password' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill('a');
+  await page.getByRole('button', { name: 'Login' }).click();
+
+  await page.route('*/**/api/franchise/*', async (route) => {
+    await route.fulfill({ json: [
+        {
+          "id": 1,
+          "name": "pizzaPocket",
+          "admins": [
+            {
+              "id": 5,
+              "name": "pizza franchisee",
+              "email": "f@jwt.com"
+            }
+          ],
+          "stores": [
+            {
+              "id": 1,
+              "name": "SLC",
+              "totalRevenue": 0
+            }
+          ]
+        }
+      ]})
+  });
 }
