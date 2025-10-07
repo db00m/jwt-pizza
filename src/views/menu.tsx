@@ -18,6 +18,7 @@ export default function Menu() {
       const menu = await pizzaService.getMenu();
       setMenu(menu);
       const franchiseList = await pizzaService.getFranchises(0, 20, '*');
+      console.log(franchiseList);
       const newStoreMap: { [key: string]: { store: Store; franchise: Franchise } } = {};
       franchiseList.franchises.forEach((franchise) => franchise.stores.forEach((store) => (newStoreMap[store.id] = { store, franchise })));
       setStoreMap(newStoreMap);

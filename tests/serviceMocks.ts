@@ -25,8 +25,88 @@ export const initialize = async (page: Page) => {
       };
       await route.fulfill({ json: loginRes });
     }
-
   });
+
+  await page.route('*/**/api/user/me', async (route) => {
+    expect(route.request().method()).toBe('GET');
+    await route.fulfill({ json: loggedInUser });
+  });
+
+  await page.route('*/**/api/order/menu', async (route) => {
+    await route.fulfill({ json: [
+        {
+          "id": 1,
+          "title": "Veggie",
+          "image": "pizza1.png",
+          "price": 0.0038,
+          "description": "A garden of delight"
+        },
+        {
+          "id": 2,
+          "title": "Pepperoni",
+          "image": "pizza2.png",
+          "price": 0.0042,
+          "description": "Spicy treat"
+        },
+        {
+          "id": 3,
+          "title": "Margarita",
+          "image": "pizza3.png",
+          "price": 0.0042,
+          "description": "Essential classic"
+        }
+      ]
+    });
+  });
+
+  await page.route('*/**/api/franchise?*', async (route) => {
+    await route.fulfill({ json: {
+      franchises: [{
+        "id": 1,
+        "name": "Middle Earth Pizza",
+        "stores": [
+          {
+            "id": 1,
+            "name": "Bilbo's Pizza"
+          }
+        ] }] } });
+  });
+
+  await page.route('*/**/api/order', async (route) => {
+
+    if (route.request().method() == "POST") {
+      const orderReq = route.request().postDataJSON();
+      const orderRes = {
+        order: { ...orderReq, id: 23 },
+        jwt: 'eyJpYXQ',
+      };
+
+      await route.fulfill({ json: orderRes });
+    } else if (route.request().method() == "GET") {
+      await route.fulfill({ json: {
+          "dinerId": 274,
+          "orders": [
+            {
+              "id": 17,
+              "franchiseId": 186,
+              "storeId": 39,
+              "date": "2025-10-07T01:07:52.000Z",
+              "items": [
+                {
+                  "id": 10,
+                  "menuId": 2,
+                  "description": "Pepperoni",
+                  "price": 0.0042
+                }
+              ]
+            }
+          ],
+          "page": 1
+        }})
+    }
+  });
+
+  await page.goto('/');
 }
 
 export const initializeWithUser = async (page: Page) => {

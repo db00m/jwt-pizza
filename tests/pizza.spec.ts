@@ -1,19 +1,19 @@
 import { test, expect } from 'playwright-test-coverage';
 import { initialize, initializeWithUser } from "./serviceMocks";
 
-test('homePage', async ({ page }) => {
+test('HomePageLoads', async ({ page }) => {
   await page.goto('/');
 
   expect(await page.title()).toBe('JWT Pizza');
 });
 
-test('About', async ({ page }) => {
+test('AboutPageLoads', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('link', { name: 'About' }).click();
   await expect(page.getByRole('main')).toContainText('The secret sauce');
 })
 
-test('History', async ({ page }) => {
+test('HistoryPageLoads', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('link', { name: 'History' }).click();
   await expect(page.getByRole('heading')).toContainText('Mama Rucci, my my');
@@ -39,6 +39,34 @@ test('Login', async ({ page }) => {
 
   await expect(page.getByRole('heading')).toContainText('The web\'s best pizza');
   await expect(page.locator('#navbar-dark')).toContainText('Logout');
+})
+
+test('OrderPageLoads', async ({ page }) => {
+  await initializeWithUser(page);
+  await page.getByRole('button', { name: 'Order now' }).click();
+  await expect(page.locator('h2')).toContainText('Awesome is a click away');
+})
+
+test('CanMakeOrder', async ({ page }) => {
+  await initializeWithUser(page);
+
+  await page.getByRole('button', { name: 'Order now' }).click();
+  await page.getByRole('combobox').selectOption('1');
+  await page.getByRole('link', { name: 'Image Description Margarita' }).click();
+  await page.getByRole('button', { name: 'Checkout' }).click();
+
+  await expect(page.locator('tbody')).toContainText('Margarita');
+  await expect(page.locator('tfoot')).toContainText('1 pie');
+
+  await page.getByRole('button', { name: 'Pay now' }).click();
+  await expect(page.getByRole('heading')).toContainText('Here is your JWT Pizza!');
+  await expect(page.getByRole('main')).toContainText('eyJpYXQ');
+})
+
+test('DinerDashboard', async ({ page }) => {
+  await initializeWithUser(page);
+  await page.getByRole('link', { name: 'K' }).click();
+  await expect(page.getByRole('heading')).toContainText('Your pizza kitchen');
 })
 
 test('Logout', async ({ page }) => {
