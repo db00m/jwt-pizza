@@ -199,3 +199,17 @@ export const setupUserUpdateRequests = async (page: Page, user: User) => {
     await route.fulfill({ json: user });
   });
 }
+
+export const setUpUserListMethods = async (page: Page) => {
+  const dummyUsers = [
+    { id: "1", name: "Frodo Baggins", email: "fbaggings@theshire.net", roles: [{ role: Role.Diner }] },
+    { id: "2", name: "Bilbo Baggins", email: "bbaggings@theshire.net", roles: [{ role: Role.Franchisee }] },
+    { id: "3", name: "Gandalf", email: "wizard@theshire.net", roles: [{ role: Role.Admin }] },
+  ]
+
+  await page.route(`**/*/api/user?*`, async (route) => {
+    await route.fulfill({ json: { users: dummyUsers, more: false }})
+  })
+
+  return dummyUsers;
+}
