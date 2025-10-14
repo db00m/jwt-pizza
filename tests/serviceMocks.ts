@@ -108,19 +108,25 @@ export const initialize = async (page: Page) => {
           "page": 1
         }})
     }
+
   });
 
-  await page.goto('/');
+  return validUsers;
 }
 
 export const initializeWithUser = async (page: Page) => {
   await page.goto('/');
-  await initialize(page);
+
+  const validUsers = await initialize(page);
+  const user = validUsers["d@jwt.com"]
+
   await page.getByRole('link', { name: 'Login' }).click();
-  await page.getByRole('textbox', { name: 'Email address' }).fill('d@jwt.com');
+  await page.getByRole('textbox', { name: 'Email address' }).fill(user.email!);
   await page.getByRole('textbox', { name: 'Password' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill('a');
+  await page.getByRole('textbox', { name: 'Password' }).fill(user.password!);
   await page.getByRole('button', { name: 'Login' }).click();
+
+  return user;
 }
 
 export const initializeWithAdmin = async (page: Page) => {
@@ -178,5 +184,18 @@ export const initializeWithFranchisee = async (page: Page) => {
           ]
         }
       ]})
+  });
+}
+
+export const setupUserUpdateRequests = async (page: Page, user: User) => {
+  await page.route(`**/*/api/user/${user.id}`, async (route) => {
+    expect(route.request().method()).toBe('PUT');
+
+    const request = route.request().postDataJSON();
+
+    user.name = request.name;
+    user.email = request.email;
+
+    await route.fulfill({ json: user });
   });
 }
