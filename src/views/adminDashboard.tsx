@@ -6,6 +6,7 @@ import Button from '../components/button';
 import { pizzaService } from '../service/service';
 import { Franchise, FranchiseList, Role, Store, User } from '../service/pizzaService';
 import { TrashIcon } from '../icons';
+import { UserListComponent } from "../components/UserListComponent";
 
 interface Props {
   user: User | null;
@@ -114,6 +115,18 @@ export default function AdminDashboard(props: Props) {
                         </tr>
                       </tfoot>
                     </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3 className="text-neutral-100 text-xl">Users</h3>
+          <div className="bg-neutral-100 overflow-clip my-4">
+            <div className="flex flex-col">
+              <div className="-m-1.5 overflow-x-auto">
+                <div className="p-1.5 min-w-full inline-block align-middle">
+                  <div className="overflow-hidden">
+                    <UserListComponent/>
                   </div>
                 </div>
               </div>

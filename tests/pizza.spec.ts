@@ -81,7 +81,8 @@ test('AdminDashboardLoads', async ({ page }) => {
   await page.getByRole('link', { name: 'Admin' }).click();
 
   await expect(page.locator('h2')).toContainText('Mama Ricci\'s kitchen');
-  await expect(page.locator('h3')).toContainText('Franchises');
+  await expect(page.getByRole('main')).toContainText('Franchises');
+  await expect(page.getByRole('main')).toContainText('Users');
 })
 
 test('CanCreateFranchise', async ({ page }) => {
@@ -94,7 +95,7 @@ test('CanCreateFranchise', async ({ page }) => {
   await page.getByRole('textbox', { name: 'franchisee admin email' }).click();
   await page.getByRole('textbox', { name: 'franchisee admin email' }).fill('a@jwt.com');
   await page.getByRole('button', { name: 'Create' }).click();
-  await expect(page.locator('h3')).toContainText('Franchises');
+  await expect(page.getByRole('main')).toContainText('Franchises');
 })
 
 test('CanCloseFranchise', async ({ page }) => {
