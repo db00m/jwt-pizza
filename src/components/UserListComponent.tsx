@@ -6,7 +6,7 @@ import { pizzaService } from "../service/service";
 
 export const UserListComponent = () => {
   const [userList, setUserList] = useState<UserList>({ users: [], more: true });
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const filterUsersRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -17,6 +17,12 @@ export const UserListComponent = () => {
 
   const filterUsers = async () => {
     setUserList(await pizzaService.getUsers(page, 10, `*${filterUsersRef.current?.value}*`));
+  }
+
+  const deleteUser = async (user: User) => {
+    pizzaService.deleteUser(user.id!).then(async () => {
+      setUserList(await pizzaService.getUsers(page, 10, "*"));
+    })
   }
 
   return (
@@ -40,7 +46,7 @@ export const UserListComponent = () => {
               {user.roles?.map(role => role.role).join(", ")}
             </td>
             <td className="px-6 py-1 whitespace-nowrap text-end text-sm font-medium">
-              <button type="button" className="px-2 py-1 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-1 border-orange-400 text-orange-400  hover:border-orange-800 hover:text-orange-800" onClick={() => console.log("Delete")}>
+              <button type="button" className="px-2 py-1 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-1 border-orange-400 text-orange-400  hover:border-orange-800 hover:text-orange-800" onClick={() => deleteUser(user)}>
                 <TrashIcon />
                 Delete
               </button>

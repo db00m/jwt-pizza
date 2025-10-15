@@ -107,6 +107,7 @@ interface PizzaService {
   getUser(): Promise<User | null>;
   updateUser(user: User): Promise<User>;
   getMenu(): Promise<Menu>;
+  deleteUser(id: string): Promise<void>;
   getOrders(user: User): Promise<OrderHistory>;
   order(order: Order): Promise<OrderResponse>;
   verifyOrder(jwt: string): Promise<JWTPayload>;

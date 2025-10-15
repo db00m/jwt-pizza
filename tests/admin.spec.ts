@@ -51,3 +51,15 @@ test('CanViewUserList', async ({ page }) => {
   await expect(page.getByRole('main')).toContainText('Bilbo Baggins');
   await expect(page.getByRole('main')).toContainText('Gandalf');
 });
+
+test('CanDeleteUser', async ({ page }) => {
+  await initializeWithAdmin(page);
+  const dummyUsers = await setUpUserListMethods(page);
+  const dummyUser = dummyUsers[0];
+
+  await page.getByRole('link', { name: 'Admin' }).click();
+  await page.getByRole('row', { name: `${dummyUser.name} ${dummyUser.email} diner` }).getByRole('button').click();
+  await page.getByRole('link', { name: 'Order' }).click();
+  await page.getByRole('link', { name: 'Admin' }).click();
+  await expect(page.getByRole('main')).not.toContainText(`${dummyUser.name}`);
+})

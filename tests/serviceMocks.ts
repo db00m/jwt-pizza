@@ -211,5 +211,19 @@ export const setUpUserListMethods = async (page: Page) => {
     await route.fulfill({ json: { users: dummyUsers, more: false }})
   })
 
+  await page.route('*/**/api/user/*', async (route) => {
+    const url = route.request().url();
+
+    // Option 1: extract using regex
+    const match = url.match(/\/api\/user\/([^/]+)/);
+    const userId = match ? match[1] : null;
+    const index = dummyUsers.findIndex(u => u.id === userId);
+    if (index !== -1) {
+      dummyUsers.splice(index, 1);
+    }
+
+    await route.fulfill({ json: { message: "user deleted"}})
+  })
+
   return dummyUsers;
 }
