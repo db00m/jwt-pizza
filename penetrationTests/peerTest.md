@@ -60,13 +60,13 @@
 #### Logged into Factory
 
 | Item           | Result                                                                                                                                           |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| -------------- |--------------------------------------------------------------------------------------------------------------------------------------------------|
 | Date           | Dec 9, 2025                                                                                                                                      |
 | Target         | pizza-service.msn510.click                                                                                                                       |
 | Classification | Broken Access Control                                                                                                                            |
 | Severity       | 2                                                                                                                                                |
 | Description    | Factory API key was in config file in artifact.  Gave me access to Matthew's factory account.  With this access I was able to enable chaos mode. |
-| Corrections    | Protect admin creation.                                                                                                                          |
+| Corrections    | Don't write config file in build step, or hide credentials in artifact.                                                                          |
 
 ### Matthew
 
